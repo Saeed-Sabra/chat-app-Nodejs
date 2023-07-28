@@ -11,11 +11,15 @@ document.querySelector("#form-message").addEventListener("submit", (e) => {
   socket.emit("msg", msg);
 });
 
-// socket.on("countUpdate", (count) => {
-//   console.log(`Count updated to ${count}`);
-// });
+document.querySelector("#send-location").addEventListener("click", () => {
+  if (!navigator.geolocation) {
+    return alert("Try another browser.");
+  }
 
-// document.querySelector("#increment").addEventListener("click", () => {
-//   console.log(`clicked`);
-//   socket.emit("increment");
-// });
+  navigator.geolocation.getCurrentPosition((position) => {
+    socket.emit("location", {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    });
+  });
+});

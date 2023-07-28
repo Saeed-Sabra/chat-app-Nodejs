@@ -24,6 +24,13 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     io.emit("message", "A user has left!");
   });
+
+  socket.on("location", (coords) => {
+    io.emit(
+      "message",
+      `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
+    );
+  });
 });
 
 server.listen(port, () => {
