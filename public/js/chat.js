@@ -15,7 +15,7 @@ socket.on("message", (msg) => {
   console.log(msg);
   const html = Mustache.render(messageTemplate, {
     message: msg.text,
-    createdAt: moment(msg.createdAt).format("h:mm:ss  A"),
+    createdAt: moment(msg.createdAt).format("h:mm A"),
   });
   $messages.insertAdjacentHTML("beforeend", html);
 });
@@ -24,7 +24,7 @@ socket.on("locationMessage", (message) => {
   console.log(message);
   const html = Mustache.render(locationTemplate, {
     url: message.url,
-    createdAt: moment(message.createdAt).format("h:mm:ss  A"),
+    createdAt: moment(message.createdAt).format("h:mm A"),
   });
 
   $messages.insertAdjacentHTML("beforeend", html);
