@@ -20,8 +20,13 @@ app.use(express.static(publicDirectoryPath));
 io.on("connection", (socket) => {
   console.log("New WebSocket Connection");
 
-  socket.emit("message", generateMessage("Welcome to the chat!"));
-  socket.broadcast.emit("message", generateMessage("A new user has joined"));
+  socket.on("join", ({ username, room }) => {
+    socket.join(room);
+    socket.emit("message", generateMessage("Welcome to the chat!"));
+    socket.broadcast
+      .to(room)
+      .emit("message", generateMessage(`${username} has joined!`));
+  });
 
   socket.on("msg", (msg, callback) => {
     const filter = new Filter();
@@ -30,12 +35,12 @@ io.on("connection", (socket) => {
       return callback("Profanity is not allowed!");
     }
 
-    io.emit("message", generateMessage(msg));
+    io.to("Center City").emit("message", generateMessage(msg));
     callback();
   });
 
   socket.on("disconnect", () => {
-    io.emit("message", generateMessage("A user has left!"));
+    io.emit("message", generateMessage(`has left!`));
   });
 
   socket.on("location", (coords, callback) => {
