@@ -39,7 +39,7 @@ io.on("connection", (socket) => {
 
     socket.join(user.room);
 
-    socket.emit("message", generateMessage("Welcome to the chat!"));
+    socket.emit("message", generateMessage("Admin","Welcome to the chat!"));
     socket.broadcast
       .to(user.room)
       .emit("message", generateMessage(`${user.username} has joined!`));
@@ -50,11 +50,26 @@ io.on("connection", (socket) => {
   socket.on("msg", (msg, callback) => {
     const filter = new Filter();
 
+    const user = getUser(socket.id);
+
     if (filter.isProfane(msg)) {
       return callback("Profanity is not allowed!");
     }
 
-    io.to("Center City").emit("message", generateMessage(msg));
+    io.to(user.room).emit("message", generateMessage(user.username, msg));
+    callback();
+  });
+
+  socket.on("location", (coords, callback) => {
+    const user = getUser(socket.id);
+
+    io.to(user.room).emit(
+      "locationMessage",
+      generateLocationMessages(
+        user.username,
+        `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
+      )
+    );
     callback();
   });
 
@@ -67,16 +82,6 @@ io.on("connection", (socket) => {
         generateMessage(`${user.username} has left!`)
       );
     }
-  });
-
-  socket.on("location", (coords, callback) => {
-    io.emit(
-      "locationMessage",
-      generateLocationMessages(
-        `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
-      )
-    );
-    callback();
   });
 });
 

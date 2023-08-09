@@ -19,6 +19,8 @@ const { username, room } = Qs.parse(location.search, {
 socket.on("message", (msg) => {
   console.log(msg);
   const html = Mustache.render(messageTemplate, {
+    username: msg.username,
+
     message: msg.text,
     createdAt: moment(msg.createdAt).format("h:mm A"),
   });
@@ -28,6 +30,7 @@ socket.on("message", (msg) => {
 socket.on("locationMessage", (message) => {
   console.log(message);
   const html = Mustache.render(locationTemplate, {
+    username: message.username,
     url: message.url,
     createdAt: moment(message.createdAt).format("h:mm A"),
   });
@@ -82,7 +85,7 @@ socket.emit("join", { username, room }, (error) => {
   if (error) {
     alert(`Error joining the chat! ${error}`);
     location.href = "/";
-    } else {
-      console.log(`${username} joined to ${room}!`);
-      };
+  } else {
+    console.log(`${username} joined to ${room}!`);
+  }
 });
