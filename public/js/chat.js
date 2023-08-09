@@ -78,4 +78,11 @@ $sendLocation.addEventListener("click", () => {
   });
 });
 
-socket.emit("join", { username, room });
+socket.emit("join", { username, room }, (error) => {
+  if (error) {
+    alert(`Error joining the chat! ${error}`);
+    location.href = "/";
+    } else {
+      console.log(`${username} joined to ${room}!`);
+      };
+});
